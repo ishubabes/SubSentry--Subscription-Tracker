@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubSentry - Subscription Tracker</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-brown-600: rgba(94, 82, 64, 1);
+            --color-charcoal-700: rgba(31, 33, 33, 1);
+            --color-charcoal-800: rgba(38, 40, 40, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            --color-red-400: rgba(255, 84, 89, 1);
+            --color-red-500: rgba(192, 21, 47, 1);
+            --color-orange-400: rgba(230, 129, 97, 1);
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+            --color-red-500-rgb: 192, 21, 47;
+            --color-orange-400-rgb: 230, 129, 97;
+
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+            --color-primary-active: var(--color-teal-700);
+            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-btn-primary-text: var(--color-cream-50);
+            --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-error: var(--color-red-500);
+            --color-warning: var(--color-orange-400);
+            --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+            
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-gray-400-rgb: 119, 124, 124;
+                --color-teal-300-rgb: 50, 184, 198;
+                --color-gray-300-rgb: 167, 169, 169;
+                --color-gray-200-rgb: 245, 245, 245;
+                
+                --color-background: var(--color-charcoal-700);
+                --color-surface: var(--color-charcoal-800);
+                --color-text: var(--color-gray-200);
+                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+                --color-primary: var(--color-teal-300);
+                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+                --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+                --color-btn-primary-text: var(--color-slate-900);
+                --color-error: var(--color-red-400);
+                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+                --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-20);
+        }
+
+        header {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-card-border);
+            padding: var(--space-24) 0;
+            margin-bottom: var(--space-24);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-20);
+        }
+
+        h1 {
+            color: var(--color-text);
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: var(--space-8);
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-16);
+            margin-bottom: var(--space-24);
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-20);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .stat-value.primary {
+            color: var(--color-primary);
+        }
+
+        .stat-value.warning {
+            color: var(--color-warning);
+        }
+
+        .add-subscription {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            margin-bottom: var(--space-24);
+            box-shadow: var(--shadow-sm);
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: var(--space-20);
+            color: var(--color-text);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-8);
+        }
+
+        input, select {
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: 14px;
+            background: var(--color-background);
+            color: var(--color-text);
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .btn {
+            padding: var(--space-12) var(--space-24);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: var(--color-btn-primary-text);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-secondary-hover);
+        }
+
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+            padding: var(--space-8) var(--space-12);
+            font-size: 13px;
+        }
+
+        .subscriptions-list {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .subscription-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: var(--space-16);
+            align-items: center;
+            padding: var(--space-16);
+            border-bottom: 1px solid var(--color-card-border);
+        }
+
+        .subscription-item:last-child {
+            border-bottom: none;
+        }
+
+        .sub-name {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .sub-category {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .sub-cost {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .sub-renewal {
+            font-size: 13px;
+        }
+
+        .renewal-soon {
+            color: var(--color-warning);
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-24);
+            color: var(--color-text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .subscription-item {
+                grid-template-columns: 1fr;
+                gap: var(--space-8);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔔 SubSentry</h1>
+            <p class="subtitle">Track your subscriptions and never miss a renewal</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-label">Total Subscriptions</div>
+                <div class="stat-value" id="totalSubs">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Monthly Cost</div>
+                <div class="stat-value primary" id="monthlyCost">₹0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Yearly Cost</div>
+                <div class="stat-value primary" id="yearlyCost">₹0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Renewing Soon</div>
+                <div class="stat-value warning" id="renewingSoon">0</div>
+            </div>
+        </div>
+
+        <div class="add-subscription">
+            <h2>Add New Subscription</h2>
+            <form id="subscriptionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Service Name *</label>
+                        <input type="text" id="name" required placeholder="e.g., Netflix">
+                    </div>
+                    <div class="form-group">
+                        <label for="cost">Cost (₹) *</label>
+                        <input type="number" id="cost" required placeholder="e.g., 499" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="billing">Billing Cycle *</label>
+                        <select id="billing" required>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="renewalDate">Next Renewal *</label>
+                        <input type="date" id="renewalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category">
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Software">Software</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Education">Education</option>
+                            <option value="Cloud Storage">Cloud Storage</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Subscription</button>
+            </form>
+        </div>
+
+        <div class="subscriptions-list">
+            <h2>Your Subscriptions</h2>
+            <div id="subscriptionsList">
+                <div class="empty-state">
+                    No subscriptions added yet. Add your first subscription above!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let subscriptions = [];
+
+        const form = document.getElementById('subscriptionForm');
+        const subscriptionsList = document.getElementById('subscriptionsList');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const subscription = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                cost: parseFloat(document.getElementById('cost').value),
+                billing: document.getElementById('billing').value,
+                renewalDate: document.getElementById('renewalDate').value,
+                category: document.getElementById('category').value
+            };
+
+            subscriptions.push(subscription);
+            form.reset();
+            renderSubscriptions();
+            updateDashboard();
+        });
+
+        function renderSubscriptions() {
+            if (subscriptions.length === 0) {
+                subscriptionsList.innerHTML = `
+                    <div class="empty-state">
+                        No subscriptions added yet. Add your first subscription above!
+                    </div>
+                `;
+                return;
+            }
+
+            subscriptionsList.innerHTML = subscriptions.map(sub => {
+                const renewalDate = new Date(sub.renewalDate);
+                const today = new Date();
+                const daysUntilRenewal = Math.ceil((renewalDate - today) / (1000 * 60 * 60 * 24));
+                const isRenewingSoon = daysUntilRenewal <= 7 && daysUntilRenewal >= 0;
+                
+                return `
+                    <div class="subscription-item">
+                        <div>
+                            <div class="sub-name">${sub.name}</div>
+                            <div class="sub-category">${sub.category}</div>
+                        </div>
+                        <div class="sub-cost">₹${sub.cost.toFixed(2)}</div>
+                        <div>${sub.billing}</div>
+                        <div class="sub-renewal ${isRenewingSoon ? 'renewal-soon' : ''}">
+                            ${renewalDate.toLocaleDateString('en-IN')}
+                            ${isRenewingSoon ? `<br>(${daysUntilRenewal} days)` : ''}
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteSubscription(${sub.id})">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteSubscription(id) {
+            subscriptions = subscriptions.filter(sub => sub.id !== id);
+            renderSubscriptions();
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            const totalSubs = subscriptions.length;
+            
+            let monthlyTotal = 0;
+            subscriptions.forEach(sub => {
+                if (sub.billing === 'monthly') {
+                    monthlyTotal += sub.cost;
+                } else if (sub.billing === 'quarterly') {
+                    monthlyTotal += sub.cost / 3;
+                } else if (sub.billing === 'yearly') {
+                    monthlyTotal += sub.cost / 12;
+                }
+            });
+
+            const yearlyTotal = monthlyTotal * 12;
+
+            const today = new Date();
+            const renewingSoon = subscriptions.filter(sub => {
+                const renewalDate = new Date(sub.renewalDate);
+                const daysUntilRenewal = Math.ceil((renewalDate - today) / (1000 * 60 * 60 * 24));
+                return daysUntilRenewal <= 7 && daysUntilRenewal >= 0;
+            }).length;
+
+            document.getElementById('totalSubs').textContent = totalSubs;
+            document.getElementById('monthlyCost').textContent = `₹${monthlyTotal.toFixed(2)}`;
+            document.getElementById('yearlyCost').textContent = `₹${yearlyTotal.toFixed(2)}`;
+            document.getElementById('renewingSoon').textContent = renewingSoon;
+        }
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('renewalDate').min = today;
+
+        // Initialize
+        updateDashboard();
+    </script>
+</body>
+</html>
